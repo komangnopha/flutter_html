@@ -61,8 +61,7 @@ class WhitespaceProcessing {
       for (int i = 0; i < tree.children.length; i++) {
         final lastChild = i != 0 ? tree.children[i - 1] : null;
         final child = tree.children[i];
-        final nextChild =
-            (i + 1) != tree.children.length ? tree.children[i + 1] : null;
+        final nextChild = (i + 1) != tree.children.length ? tree.children[i + 1] : null;
 
         if (child.style.whiteSpace == WhiteSpace.pre) {
           continue;
@@ -73,13 +72,11 @@ class WhitespaceProcessing {
           _removeTrailingSpace(child);
         }
 
-        if (lastChild?.style.display == Display.block ||
-            lastChild?.name == "br") {
+        if (lastChild?.style.display == Display.block || lastChild?.name == "br") {
           _removeLeadingSpace(child);
         }
 
-        if (nextChild?.style.display == Display.block ||
-            nextChild?.name == "br") {
+        if (nextChild?.style.display == Display.block || nextChild?.name == "br") {
           _removeTrailingSpace(child);
         }
       }
@@ -140,8 +137,7 @@ class WhitespaceProcessing {
 
       /// find the index of the text in the current tree
       if (tree.element?.nodes.isNotEmpty ?? false) {
-        textIndex =
-            tree.element!.nodes.indexWhere((element) => element == tree.node);
+        textIndex = tree.element!.nodes.indexWhere((element) => element == tree.node);
       }
 
       /// get the parent nodes
@@ -149,16 +145,14 @@ class WhitespaceProcessing {
 
       /// find the index of the tree itself in the parent nodes
       if (parentNodes?.isNotEmpty ?? false) {
-        elementIndex =
-            parentNodes!.indexWhere((element) => element == tree.element);
+        elementIndex = parentNodes!.indexWhere((element) => element == tree.element);
       }
 
       /// if the tree is any node except the last node in the node list and the
       /// next node in the node list is a text node, then get its text. Otherwise
       /// the next node will be a [dom.Element], so keep unwrapping that until
       /// we get the underlying text node, and finally get its text.
-      if (elementIndex < (parentNodes?.length ?? 1) - 1 &&
-          parentNodes?[elementIndex + 1] is html.Text) {
+      if (elementIndex < (parentNodes?.length ?? 1) - 1 && parentNodes?[elementIndex + 1] is html.Text) {
         parentAfterText = parentNodes?[elementIndex + 1].text ?? " ";
       } else if (elementIndex < (parentNodes?.length ?? 1) - 1) {
         var parentAfter = parentNodes?[elementIndex + 1];
@@ -186,15 +180,12 @@ class WhitespaceProcessing {
           tree.element?.localName != "br" &&
           (!keepLeadingSpace.data || tree.style.display == Display.block) &&
           (elementIndex < 1 ||
-              (elementIndex >= 1 &&
-                  parentNodes?[elementIndex - 1] is html.Text &&
-                  parentNodes![elementIndex - 1].text!.endsWith(" ")))) {
+              (elementIndex >= 1 && parentNodes?[elementIndex - 1] is html.Text && parentNodes![elementIndex - 1].text!.endsWith(" ")))) {
         tree.text = tree.text!.replaceFirst(' ', '');
       } else if (textIndex >= 1 &&
           tree.text!.startsWith(' ') &&
           tree.element?.nodes[textIndex - 1] is html.Element &&
-          (tree.element?.nodes[textIndex - 1] as html.Element).localName ==
-              "br") {
+          (tree.element?.nodes[textIndex - 1] as html.Element).localName == "br") {
         tree.text = tree.text!.replaceFirst(' ', '');
       }
 
@@ -203,9 +194,7 @@ class WhitespaceProcessing {
       /// update the [Context] to signify to that next text node whether it should
       /// keep its whitespace. This is based on whether the current text ends with a
       /// whitespace.
-      if (textIndex == (tree.node.nodes.length - 1) &&
-          tree.element?.localName != "br" &&
-          parentAfterText.startsWith(' ')) {
+      if (textIndex == (tree.node.nodes.length - 1) && tree.element?.localName != "br" && parentAfterText.startsWith(' ')) {
         keepLeadingSpace.data = !tree.text!.endsWith(' ');
       }
     }
@@ -227,7 +216,7 @@ class WhitespaceProcessing {
   static String _removeUnnecessaryWhitespace(String text) {
     return text
         .replaceAll(RegExp(r" *(?=\n)"), "")
-        .replaceAll(RegExp(r"(?<=\n) *"), "")
+        // .replaceAll(RegExp(r"(?<=\n) *"), "")
         .replaceAll("\n", " ")
         .replaceAll("\t", " ")
         .replaceAll(RegExp(r" {2,}"), " ");
@@ -249,14 +238,11 @@ class WhitespaceProcessing {
                   (index == 0 ||
                       index + 1 == tree.children.length ||
                       tree.children[index - 1].style.display == Display.block ||
-                      tree.children[index + 1].style.display ==
-                          Display.block)) ||
+                      tree.children[index + 1].style.display == Display.block)) ||
               tree.name == "ul") &&
           child.text!.replaceAll(' ', '').isEmpty) {
         toRemove.add(child);
-      } else if (child is TextContentElement &&
-          child.text!.isEmpty &&
-          child.style.whiteSpace != WhiteSpace.pre) {
+      } else if (child is TextContentElement && child.text!.isEmpty && child.style.whiteSpace != WhiteSpace.pre) {
         toRemove.add(child);
       } else if (child is TextContentElement &&
           child.style.whiteSpace != WhiteSpace.pre &&
@@ -271,9 +257,8 @@ class WhitespaceProcessing {
       }
 
       // This is used above to check if the previous element is a block element or a line break.
-      lastChildBlock = (child.style.display == Display.block ||
-          child.style.display == Display.listItem ||
-          (child is TextContentElement && child.text == '\n'));
+      lastChildBlock =
+          (child.style.display == Display.block || child.style.display == Display.listItem || (child is TextContentElement && child.text == '\n'));
     });
     tree.children.removeWhere((element) => toRemove.contains(element));
 
